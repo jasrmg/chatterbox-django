@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!--tailwind-->
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <!--google fonts Roboto & Lobster-->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lobster&family=Roboto:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <!--custom css-->
+    <link rel="stylesheet" href="{% static 'chatApp/css/global.css' %}" />
+    {% block head %} {% endblock %}
+    <title>{% block title %}sample{% endblock %}</title>
+  </head>
+  {% block content %}
+  <body class="bg-gray-50 font-roboto"></body>
+  {% endblock %}
+</html>

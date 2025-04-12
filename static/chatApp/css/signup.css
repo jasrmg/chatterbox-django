@@ -1,0 +1,10 @@
+.step-indicator {
+  width: 36px;
+  height: 36px;
+}
+.step-line {
+  height: 3px;
+}
+.form-transition {
+  transition: all 0.3s ease-in-out;
+}

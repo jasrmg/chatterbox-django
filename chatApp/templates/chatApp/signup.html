@@ -1,0 +1,303 @@
+{% extends 'chatApp/base.html' %}
+<!--allow static-->
+{% load static %}
+<!--page title-->
+{% block title %} Chatterbox - Signup {% endblock %}
+<!--additional css-->
+{% block head %}
+<link rel="stylesheet" href="{% static 'chatApp/css/login_signup.css' %}" />
+<link rel="stylesheet" href="{% static 'chatApp/css/signup.css' %}" />
+{% endblock %}
+<!--content-->
+{% block content %}
+<body class="bg-gray-50 font-roboto">
+  <div
+    class="min-h-screen flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8"
+  >
+    <div
+      class="max-w-md w-full space-y-8 bg-white p-6 sm:p-8 rounded-xl shadow-lg"
+    >
+      <!-- Logo and App Name -->
+      <div class="text-center">
+        <div
+          class="mx-auto h-16 w-16 rounded-full bg-secondary flex items-center justify-center shadow-md"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-10 w-10 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+            />
+          </svg>
+        </div>
+        <h1 class="mt-4 text-4xl font-lobster text-secondary">Chatterbox</h1>
+        <p class="mt-2 text-gray-500">
+          Create your account in three simple steps
+        </p>
+      </div>
+
+      <!-- Progress Indicator -->
+      <div class="flex items-center justify-between px-4 py-3">
+        <div class="flex flex-col items-center">
+          <div
+            id="step1-indicator"
+            class="step-indicator rounded-full bg-primary text-white flex items-center justify-center font-medium"
+          >
+            1
+          </div>
+          <span class="mt-1 text-xs text-gray-600">Personal</span>
+        </div>
+        <div class="step-line flex-1 bg-gray-300 mx-2" id="line1"></div>
+        <div class="flex flex-col items-center">
+          <div
+            id="step2-indicator"
+            class="step-indicator rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-medium"
+          >
+            2
+          </div>
+          <span class="mt-1 text-xs text-gray-600">Account</span>
+        </div>
+        <div class="step-line flex-1 bg-gray-300 mx-2" id="line2"></div>
+        <div class="flex flex-col items-center">
+          <div
+            id="step3-indicator"
+            class="step-indicator rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-medium"
+          >
+            3
+          </div>
+          <span class="mt-1 text-xs text-gray-600">Security</span>
+        </div>
+      </div>
+
+      <!-- Form Container -->
+      <div class="mt-6">
+        <!-- Step 1: Personal Information -->
+        <div id="step1" class="form-transition bounce-in">
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">
+            Personal Information
+          </h2>
+          <div class="space-y-6">
+            <div>
+              <label
+                for="firstName"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >First Name</label
+              >
+              <input
+                type="text"
+                id="firstName"
+                name="firstName"
+                class="input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                placeholder="Enter your first name"
+              />
+              <p id="firstNameError" class="hidden text-sm text-red-600 mt-1">
+                First name is required
+              </p>
+            </div>
+            <div>
+              <label
+                for="lastName"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Last Name</label
+              >
+              <input
+                type="text"
+                id="lastName"
+                name="lastName"
+                class="input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                placeholder="Enter your last name"
+              />
+              <p id="lastNameError" class="hidden text-sm text-red-600 mt-1">
+                Last name is required
+              </p>
+            </div>
+            <div class="flex justify-end">
+              <button
+                id="toStep2Button"
+                class="bg-primary text-white font-medium py-2 px-6 rounded-lg hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Account Information -->
+        <div id="step2" class="form-transition hidden">
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">
+            Account Information
+          </h2>
+          <div class="space-y-6">
+            <div>
+              <label
+                for="username"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Username</label
+              >
+              <input
+                type="text"
+                id="username"
+                name="username"
+                class="input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                placeholder="Choose a username"
+              />
+              <p id="usernameError" class="hidden text-sm text-red-600 mt-1">
+                Username is required
+              </p>
+            </div>
+            <div>
+              <label
+                for="email"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Email Address</label
+              >
+              <input
+                type="email"
+                id="email"
+                name="email"
+                class="input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                placeholder="Enter your email address"
+              />
+              <p id="emailError" class="hidden text-sm text-red-600 mt-1">
+                Valid email is required
+              </p>
+            </div>
+            <div class="flex justify-between">
+              <button
+                id="backToStep1Button"
+                class="border border-gray-300 text-gray-600 font-medium py-2 px-6 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-all"
+              >
+                Back
+              </button>
+              <button
+                id="toStep3Button"
+                class="bg-primary text-white font-medium py-2 px-6 rounded-lg hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Security Information -->
+        <div id="step3" class="form-transition hidden">
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">
+            Set Your Password
+          </h2>
+          <div class="space-y-6">
+            <div>
+              <label
+                for="password"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Password</label
+              >
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                placeholder="Create a password"
+              />
+
+              <p id="passwordError" class="hidden text-sm text-red-600 mt-1">
+                Password must be at least 8 characters
+              </p>
+            </div>
+            <div>
+              <label
+                for="confirmPassword"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Confirm Password</label
+              >
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                class="input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                placeholder="Confirm your password"
+              />
+              <p
+                id="confirmPasswordError"
+                class="hidden text-sm text-red-600 mt-1"
+              >
+                Passwords don't match
+              </p>
+            </div>
+            <div class="flex justify-between">
+              <button
+                id="backToStep2Button"
+                class="border border-gray-300 text-gray-600 font-medium py-2 px-6 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-all"
+              >
+                Back
+              </button>
+              <button
+                id="createAccountButton"
+                class="bg-secondary text-white font-medium py-2 px-6 rounded-lg hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary transition-all"
+              >
+                Create Account
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Success Screen (hidden initially) -->
+        <div id="successStep" class="form-transition hidden text-center">
+          <div class="py-6">
+            <div
+              class="mx-auto h-20 w-20 rounded-full bg-green-100 flex items-center justify-center mb-4"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-12 w-12 text-green-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">
+              Account Created!
+            </h2>
+            <p class="text-gray-600 mb-6">
+              Your Chatterbox account has been created successfully.
+            </p>
+            <button
+              id="goToLoginButton"
+              class="bg-primary text-white font-medium py-3 px-8 rounded-lg hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all"
+            >
+              Go to Login
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sign in link -->
+      <div class="text-center mt-4 pt-4 border-t border-gray-200">
+        <p class="text-gray-600">
+          Already have an account?
+          <a
+            href="{% url 'login' %}"
+            class="text-primary font-medium hover:text-opacity-80"
+            >Sign in</a
+          >
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'chatApp/js/signup.js' %}"></script>
+</body>
+{% endblock %}
