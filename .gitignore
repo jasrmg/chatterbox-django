@@ -23,3 +23,6 @@ media/
 
 # IDEs
 .idea/
+
+# ignore django settings.py
+chatProject/settings.py
