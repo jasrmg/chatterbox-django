@@ -3,7 +3,9 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib import messages
 from . models import CustomUser
 from django.http import HttpResponse, JsonResponse
-from django.contrib.auth.decorators import login_required 
+from . forms import CustomUserCreationForm
+
+# from django.contrib.auth.decorators import login_required 
 # from django.views.decorators.csrf import csrf_exempt
 # import json
 
@@ -52,7 +54,24 @@ def authenticate_by_username_or_email(request, identifier, password):
 #   return JsonResponse({'success': False, 'error': 'Only POST allowed'}, status=405)
 
 
+#ERRORS:
+def pagenotfound_view(request, exception=None):
+  return render(request, 'chatApp/404notfound.html', status=404)
+
+def login_required_view(request):
+  return render(request, 'chatApp/pleaselogin.html')
+
 def signup_view(request):
+  if request.method == 'POST':
+    form = CustomUserCreationForm(request.POST)
+    if form.is_valid():
+      user = form.save()
+      login(request, user)
+      return render(request, 'chatApp/chat.html')
+    else:
+      messages.error(request, 'There was an error in your form.')
+  else:
+    form = CustomUserCreationForm()
   return render(request, 'chatApp/signup.html')
 
 # LOGIN WITH DJANGO
@@ -75,6 +94,19 @@ def logout_view(request):
   logout(request)
   return redirect('login')
 
-@login_required
+# @login_required
 def chat_view(request):
-  return render(request, 'chatApp/chat.html')
+  if not request.user.is_authenticated:
+    return render(request, 'chatApp/pleaselogin.html')
+  
+  context = getUserInfo(request)
+  return render(request, 'chatApp/chat.html', context)
+
+def getUserInfo(request):
+  user = request.user
+  context = {
+    'first_name': user.first_name,
+    'last_name': user.last_name,
+    'email': user.email,
+  }
+  return context

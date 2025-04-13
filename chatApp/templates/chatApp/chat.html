@@ -445,8 +445,10 @@
             </div>
           </div>
 
-          <h3 class="text-xl font-robot font-medium mb-1">John Doe</h3>
-          <p class="text-gray-500 font-robot mb-4">john.doe@example.com</p>
+          <h3 class="text-xl font-robot font-medium mb-1">
+            {{ first_name |title }} {{ last_name |title }}
+          </h3>
+          <p class="text-gray-500 font-robot mb-4">{{ email }}</p>
 
           <div class="w-full">
             <div class="mb-4">

@@ -1,0 +1,39 @@
+.logo-font {
+  font-family: "Lobster", cursive;
+}
+
+@keyframes pulse-soft {
+  0% {
+    box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(79, 70, 229, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
+  }
+}
+
+.pulse-animation {
+  animation: pulse-soft 2s infinite;
+}
+
+.chat-bubble {
+  position: relative;
+  background: #f3f4f6;
+  border-radius: 0.5rem;
+}
+
+.chat-bubble:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border: 15px solid transparent;
+  border-top-color: #f3f4f6;
+  border-bottom: 0;
+  margin-left: -15px;
+  margin-bottom: -15px;
+}
