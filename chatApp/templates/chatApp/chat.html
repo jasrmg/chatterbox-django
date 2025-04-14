@@ -1,4 +1,6 @@
 {% extends 'chatApp/base.html' %}
+<!--custom template filter-->
+{% load filters %}
 <!--allow static-->
 {% load static %}
 <!--page title-->
@@ -10,6 +12,7 @@
 
 <!--start of body-->
 {% block content %}
+<!---->
 <body class="bg-gray-100 h-screen flex flex-col md:flex-row overflow-hidden">
   <!-- Left Sidebar -->
   <div
@@ -50,30 +53,53 @@
       </div>
       <div class="contacts">
         <!-- Contact Items -->
+        <!--testing-->
+        {% for convo in conversations %}
         <div
-          class="px-3 py-2 flex items-center hover:bg-gray-100 cursor-pointer border-b border-gray-100"
+          class="conversation px-3 py-2 flex items-center hover:bg-gray-100 cursor-pointer border-b border-gray-100"
+          data-room-name="{{ convo.room_name }}"
+          data-room-id="{{ convo.room_id }}"
+          data-user-avatar="{{ convo.avatar }}"
         >
           <div class="relative">
+            {% if convo.avatar %}
             <img
-              src="https://ui-avatars.com/api/?name=Sarah+Johnson&size=40"
+              src="{{ convo.avatar }}"
               class="w-10 h-10 rounded-full"
-              alt="Contact"
+              alt="Avatar"
             />
+            {% else %}
+            <img
+              src="https://ui-avatars.com/api/?name=Mike+Peters&size=40"
+              class="w-10 h-10 rounded-full"
+              alt="Avatar"
+            />
+            {% endif %}
             <span
               class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"
             ></span>
           </div>
           <div class="ml-3 flex-grow">
             <div class="flex justify-between">
-              <p class="font-robot font-medium text-gray-800">Sarah Johnson</p>
-              <span class="text-xs text-gray-500">12:45 PM</span>
+              <p class="font-robot font-medium text-gray-800">
+                {{ convo.room_name }}
+              </p>
+              {% if convo.latest_timestamp %}
+              <span class="text-xs text-gray-500">
+                {{ convo.latest_timestamp|formatted_time }}
+              </span>
+              {% else %}
+              <span class="text-xs text-gray-500"> No messages yet </span>
+              {% endif %}
             </div>
             <p class="text-sm text-gray-500 truncate">
-              Hey, how are you doing today?
+              {{ convo.latest_message }}
             </p>
           </div>
         </div>
+        {% endfor %}
         <!-- More contact items as in original code -->
+        <!--UNREAD
         <div
           class="px-3 py-2 flex items-center bg-gray-100 cursor-pointer border-b border-gray-100"
         >
@@ -97,6 +123,7 @@
             </p>
           </div>
         </div>
+        -->
       </div>
     </div>
 
@@ -110,7 +137,7 @@
         <div class="flex items-center">
           <div class="relative">
             <img
-              src="https://ui-avatars.com/api/?name=John+Doe&size=40"
+              src="{{ userInfo.profile_picture }}"
               class="w-10 h-10 rounded-full"
               alt="Contact"
             />
@@ -119,7 +146,9 @@
             ></span>
           </div>
           <div class="ml-3">
-            <p class="font-robot font-medium text-gray-800">John Doe</p>
+            <p class="font-robot font-medium text-gray-800">
+              {{ userInfo.first_name | title }} {{ userInfo.last_name | title }}
+            </p>
             <p class="text-xs text-gray-500">Online</p>
           </div>
         </div>
@@ -199,6 +228,7 @@
     <!-- Chat Header -->
     <div
       class="bg-white p-3 flex items-center border-b border-gray-200 shadow-sm"
+      id="chat-header"
     >
       <div class="md:hidden mr-2">
         <button id="menu-button" class="text-gray-600 focus:outline-none">
@@ -224,14 +254,19 @@
             src="https://ui-avatars.com/api/?name=Mike+Peters&size=40"
             class="w-10 h-10 rounded-full"
             alt="Contact"
+            id="user-avatar"
           />
+          <!--default offline-->
           <span
-            class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"
+            class="absolute bottom-0 right-0 w-3 h-3 bg-gray-500 rounded-full border-2 border-white"
+            id="status-indicator"
           ></span>
         </div>
         <div class="ml-3">
-          <p class="font-robot font-medium text-gray-800">Mike Peters</p>
-          <p class="text-xs text-gray-500">Online</p>
+          <p class="font-robot font-medium text-gray-800" id="room-name">
+            Mike Peters
+          </p>
+          <p class="text-xs text-gray-500" id="user-status">Offline</p>
         </div>
       </div>
       <div class="ml-auto flex">
@@ -421,7 +456,7 @@
         <div class="flex flex-col items-center">
           <div class="relative">
             <img
-              src="https://ui-avatars.com/api/?name=John+Doe&size=40"
+              src="{{ userInfo.profile_picture }}"
               class="w-32 h-32 rounded-full mb-4"
               alt="User Avatar"
             />
@@ -446,7 +481,7 @@
           </div>
 
           <h3 class="text-xl font-robot font-medium mb-1">
-            {{ first_name |title }} {{ last_name |title }}
+            {{ userInfo.first_name | title }} {{ userInfo.last_name | title }}
           </h3>
           <p class="text-gray-500 font-robot mb-4">{{ email }}</p>
 
@@ -854,5 +889,6 @@
   </div>
 
   <script src="{% static 'chatApp/js/chat.js' %}"></script>
+  <script src="{% static 'chatApp/js/chatsidebar.js' %}"></script>
 </body>
 {% endblock %}

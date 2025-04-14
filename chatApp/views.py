@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib import messages
 from . models import CustomUser
@@ -28,32 +28,6 @@ def authenticate_by_username_or_email(request, identifier, password):
   
   return None
 
-# LOGIN USING AJAX
-# @csrf_exempt
-# def login_view(request):
-#   User = get_user_model()
-#   if request.method == 'POST':
-#     try:
-#       data = json.loads(request.body)
-#       identifier = data.get('username_or_email')
-#       password = data.get('password')
-#     except json.JSONDecodeError:
-#       return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
-
-#     try:
-#       user = User.objects.get(Q(username=identifier) | Q(email=identifier))
-#     except User.DoesNotExist:
-#       return JsonResponse({'success': False, 'error': 'Invalid credentials'}, status=401)
-
-#     if user.check_password(password):
-#       login(request, user)
-#       return JsonResponse({'success': True})
-#     else:
-#       return JsonResponse({'success': False, 'error': 'Invalid credentials'}, status=401)
-
-#   return JsonResponse({'success': False, 'error': 'Only POST allowed'}, status=405)
-
-
 #ERRORS:
 def pagenotfound_view(request, exception=None):
   return render(request, 'chatApp/404notfound.html', status=404)
@@ -67,7 +41,7 @@ def signup_view(request):
     if form.is_valid():
       user = form.save()
       login(request, user)
-      return render(request, 'chatApp/chat.html')
+      return redirect('chat')
     else:
       messages.error(request, 'There was an error in your form.')
   else:
@@ -99,7 +73,10 @@ def chat_view(request):
   if not request.user.is_authenticated:
     return render(request, 'chatApp/pleaselogin.html')
   
-  context = getUserInfo(request)
+  context = {
+    'userInfo': getUserInfo(request),
+    'conversations': get_user_conversations(request.user)
+  }
   return render(request, 'chatApp/chat.html', context)
 
 def getUserInfo(request):
@@ -108,5 +85,62 @@ def getUserInfo(request):
     'first_name': user.first_name,
     'last_name': user.last_name,
     'email': user.email,
+    'profile_picture': user.profile_picture.url if user.profile_picture else None
   }
   return context
+
+#get user conversations:
+from . models import Room, Message
+def get_user_conversations(user):
+  rooms = Room.objects.filter(participants=user).prefetch_related('participants')
+
+  conversations = []
+  for room in rooms:
+    latest_message = room.messages.order_by('-timestamp').first()
+
+    if room.is_group:
+      avatar = None
+    else:
+      other = room.participants.exclude(user_id=user.user_id).first()
+      avatar = other.profile_picture.url if other and other.profile_picture else None
+
+    conversations.append({
+      'room_id': room.room_id,
+      'room_name': room.get_room_name_for_user(user),
+      'is_group': room.is_group,
+      'avatar': avatar,
+      'participants': room.participants.exclude(user_id=user.user_id),
+      'latest_message': latest_message.content if latest_message else "",
+      'latest_timestamp': latest_message.timestamp if latest_message else None
+    })
+  return conversations
+
+
+from django.utils.timezone import localtime
+def load_messages(request, room_id):
+  if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+    room = get_object_or_404(Room, room_id=room_id)
+    messages = Message.objects.filter(room=room).order_by('timestamp')
+    current_user = request.user
+
+    current_user_avatar = (
+      current_user.profile_picture.url
+      if current_user.profile_picture
+      else "https://ui-avatars.com/api/?name=You&size=40"
+    )
+
+    message_list = [
+      {
+        'sender': f"{msg.sender.first_name} {msg.sender.last_name}",
+        'text': msg.content,
+        'timestamp': localtime(msg.timestamp).strftime('%I:%M %p'),
+        'is_current_user': msg.sender == request.user,
+        'sender_avatar': (
+          msg.sender.profile_picture.url
+          if msg.sender.profile_picture
+          else "https://ui-avatars.com/api/?name={}&size=40".format(f"{msg.sender.first_name} {msg.sender.last_name}")
+        ),
+      } for msg in messages
+    ]
+    return JsonResponse({'messages': message_list, 'current_user_avatar': current_user_avatar}, status=200)
+  return JsonResponse({'error': 'Invalid request'}, status=400)

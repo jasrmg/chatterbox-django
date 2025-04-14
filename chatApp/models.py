@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractUser
 class CustomUser(AbstractUser):
   user_id = models.AutoField(primary_key=True)
   profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+  is_online = models.BooleanField(default=False)
 
   def __str__(self):
     return self.get_full_name() or self.username
